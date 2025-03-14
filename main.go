@@ -116,7 +116,7 @@ func get(topicsName string) RSS{
 }
 
 func main() {
-	
+	go startHealthServer()
 
 	// 環境変数から Discord Bot のトークンを取得
 	token := os.Getenv("DISCORD_BOT_TOKEN")
@@ -156,4 +156,11 @@ func main() {
 
 	// Bot を停止
 	dg.Close()
+}
+
+func startHealthServer() {
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintln(w, "OK")
+    })
+    http.ListenAndServe(":8000", nil)
 }
