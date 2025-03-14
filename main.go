@@ -162,5 +162,6 @@ func startHealthServer() {
     http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
         fmt.Fprintln(w, "OK")
     })
+    fmt.Println("Health server is running on port 8000")
     http.ListenAndServe(":8000", nil)
 }
