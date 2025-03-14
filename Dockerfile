@@ -1,12 +1,19 @@
-FROM golang:1.19-alpine AS builder
+FROM golang:1.22-alpine AS builder
+
 WORKDIR /app
-COPY . .
+
+COPY go.mod go.sum ./
 RUN go mod download
-RUN go build -o ./example-golang ./main.go
- 
- 
-FROM alpine:latest AS runner
-WORKDIR /app
-COPY --from=builder /app/example-golang .
-EXPOSE 8080
-ENTRYPOINT ["./example-golang"]
+
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -o bot .
+
+FROM alpine:latest
+
+RUN apk --no-cache add ca-certificates
+
+WORKDIR /root/
+
+COPY --from=builder /app/bot .
+
+CMD ["./bot"]
